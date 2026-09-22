@@ -1,179 +1,179 @@
-# ربات هوش مصنوعی بله (Bale AI Bot)
+# Bale AI Bot (OpenClaw-based)
 
-ربات تلگرام/بله مبتنی بر OpenClaw که امکان گفتگو با مدل‌های مختلف هوش مصنوعی را فراهم می‌کند.
+A Telegram/Bale bot based on OpenClaw that enables conversations with various AI models.
 
-## 📋 فهرست
+## 📋 Table of Contents
 
-- [ویژگی‌ها](#ویژگیها)
-- [پیش‌نیازها](#پیشنیازها)
-- [نصب و راه‌اندازی](#نصب-و-راهاندازی)
-- [تنظیمات](#تنظیمات)
-- [دستورات ربات](#دستورات-ربات)
-- [سطوح Thinking](#سطوح-thinking)
-- [ساختار فایل‌ها](#ساختار-فایلها)
-- [نحوه کارکرد](#نحوه-کارکرد)
-- [کش مدل‌ها](#کش-مدلها)
-- [محدودیت‌ها](#محدودیتها)
-- [نکات امنیتی](#نکات-امنیتی)
-- [نمونه مکالمه](#نمونه-مکالمه)
-- [مجوز](#مجوز)
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Installation & Setup](#installation--setup)
+- [Configuration](#configuration)
+- [Bot Commands](#bot-commands)
+- [Thinking Levels](#thinking-levels)
+- [File Structure](#file-structure)
+- [How It Works](#how-it-works)
+- [Models Cache](#models-cache)
+- [Limitations](#limitations)
+- [Security Notes](#security-notes)
+- [Sample Conversation](#sample-conversation)
+- [License](#license)
 
-## ✨ ویژگی‌ها
+## ✨ Features
 
-- **پشتیبانی از چندین مدل**: امکان انتخاب از بین مدل‌های مختلف OpenAI و سایر ارائه‌دهندگان
-- **مدیریت هیستوری چت**: ذخیره و بازیابی گفتگوهای قبلی
-- **تنظیم سطح Thinking**: کنترل عمق استدلال مدل (light, medium, extra, high, max)
-- **حذف پیام‌ها**: قابلیت حذف پیام‌های ارسالی در بله برای حفظ حریم خصوصی
-- **مانیتورینگ توکن**: نمایش گرافیکی مانده توکن‌های مصرفی
-- **ذخیره‌سازی پایدار**: حفظ وضعیت کاربران حتی پس از ریستارت ربات
-- **کش مدل‌ها**: کاهش درخواست‌های تکراری به سرور OpenClaw
+- **Multi-Model Support**: Choose from various OpenAI and other provider models
+- **Chat History Management**: Save and retrieve previous conversations
+- **Thinking Level Control**: Adjust model reasoning depth (light, medium, extra, high, max)
+- **Message Deletion**: Delete sent messages in Bale for privacy
+- **Token Monitoring**: Graphical display of remaining token usage
+- **Persistent Storage**: Maintain user state even after bot restart
+- **Models Caching**: Reduce repeated requests to OpenClaw server
 
-## 🛠 پیش‌نیازها
+## 🛠 Prerequisites
 
-- پایتون ۳.۸ یا بالاتر
-- دسترسی به سرویس OpenClaw (در حال اجرا روی `http://127.0.0.1:18789`)
-- توکن ربات بله (از [@BotFather](https://t.me/BotFather) یا معادل بله دریافت کنید)
-- کتابخانه‌های پایتون (در `requirements.txt`)
+- Python 3.8 or higher
+- Access to OpenClaw service (running on `http://127.0.0.1:18789`)
+- Bale bot token (get from [@BotFather](https://t.me/BotFather) or Bale equivalent)
+- Python libraries (listed in `requirements.txt`)
 
-## 📥 نصب و راه‌اندازی
+## 📥 Installation & Setup
 
-### ۱. کلون کردن پروژه
+### 1. Clone the Repository
 
 ```bash
 git clone <repository-url>
 cd <project-directory>
 ```
 
-### ۲. نصب وابستگی‌ها
+### 2. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### ۳. تنظیم توکن ربات
+### 3. Configure Bot Token
 
-فایل `config.py` را ویرایش کرده و توکن ربات خود را قرار دهید:
+Edit `config.py` and add your bot token:
 
 ```python
 BALE_TOKEN="YOUR_BOT_TOKEN_HERE"
 OPENCLAW_URL="http://127.0.0.1:18789"
 ```
 
-> ⚠️ **هشدار امنیتی**: هرگز فایل `config.py` را در مخزن عمومی گیت‌هاب آپلود نکنید.
+> ⚠️ **Security Warning**: Never commit `config.py` to public GitHub repositories.
 
-### ۴. اجرای ربات
+### 4. Run the Bot
 
 ```bash
 python main.py
 ```
 
-## ⚙️ تنظیمات
+## ⚙️ Configuration
 
-| متغیر | توضیح | پیش‌فرض |
-|-------|-------|---------|
-| `BALE_TOKEN` | توکن ربات بله | - |
-| `OPENCLAW_URL` | آدرس سرور OpenClaw | `http://127.0.0.1:18789` |
-| `MAX_HISTORY_PER_USER` | حداکثر چت‌های ذخیره شده برای هر کاربر | 30 |
-| `MAX_RECENT_CHATS_SHOWN` | حداکثر چت‌های نمایش داده شده در لیست | 8 |
-| `MODELS_CACHE_TTL_SECONDS` | زمان انقضای کش مدل‌ها (ثانیه) | 120 |
-| `MAX_MODEL_LIST` | حداکثر تعداد مدل‌های نمایش داده شده | 12 |
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `BALE_TOKEN` | Bale bot token | - |
+| `OPENCLAW_URL` | OpenClaw server URL | `http://127.0.0.1:18789` |
+| `MAX_HISTORY_PER_USER` | Max chats stored per user | 30 |
+| `MAX_RECENT_CHATS_SHOWN` | Max chats shown in list | 8 |
+| `MODELS_CACHE_TTL_SECONDS` | Models cache TTL (seconds) | 120 |
+| `MAX_MODEL_LIST` | Max models displayed | 12 |
 
-## 📜 دستورات ربات
+## 📜 Bot Commands
 
-| دستور | توضیح | مثال |
-|-------|-------|------|
-| `/start` | شروع بات و نمایش پیام خوش‌آمدگویی | `/start` |
-| `/help` | نمایش لیست کامل دستورات | `/help` |
-| `/newchat` یا `/new` | ایجاد گفتگوی جدید و آرشیو کردن گفتگوی فعلی | `/newchat` |
-| `/end` یا `/exit` | توقف گفتگو و ذخیره در هیستوری | `/end` |
-| `/recentchats` | نمایش لیست گفتگوهای اخیر | `/recentchats` |
-| `/continuechat <index>` | ادامه یک گفتگو از هیستوری | `/continuechat 2` |
-| `/clear` | حذف تمامی پیام‌های چت فعلی در بله + ریست هیستوری | `/clear` |
-| `/deletehistory <all\|index>` | حذف یک مورد یا تمام هیستوری چت‌ها | `/deletehistory all` |
-| `/models` | نمایش لیست مدل‌های OpenAI | `/models` |
-| `/models all` | نمایش لیست تمام مدل‌های موجود | `/models all` |
-| `/models <index>` | انتخاب مدل بر اساس شماره | `/models 3` |
-| `/models <model_id>` | انتخاب مدل مستقیم با شناسه | `/models openai/gpt-4` |
-| `/model` | نمایش مدل فعلی | `/model` |
-| `/reasoning` یا `/thinking` | نمایش سطح thinking فعلی | `/reasoning` |
-| `/reasoning <level>` | تنظیم سطح thinking | `/reasoning medium` |
-| `/remainingusage` | نمایش مانده توکن به صورت گرافیکی | `/remainingusage` |
+| Command | Description | Example |
+|---------|-------------|---------|
+| `/start` | Start bot and show welcome message | `/start` |
+| `/help` | Show full command list | `/help` |
+| `/newchat` or `/new` | Create new chat and archive current one | `/newchat` |
+| `/end` or `/exit` | Stop conversation and save to history | `/end` |
+| `/recentchats` | Show recent chat history | `/recentchats` |
+| `/continuechat <index>` | Continue a chat from history | `/continuechat 2` |
+| `/clear` | Delete all chat messages in Bale + reset history | `/clear` |
+| `/deletehistory <all\|index>` | Delete one or all history items | `/deletehistory all` |
+| `/models` | Show OpenAI models list | `/models` |
+| `/models all` | Show all available models | `/models all` |
+| `/models <index>` | Select model by number | `/models 3` |
+| `/models <model_id>` | Select model directly by ID | `/models openai/gpt-4` |
+| `/model` | Show current model | `/model` |
+| `/reasoning` or `/thinking` | Show current thinking level | `/reasoning` |
+| `/reasoning <level>` | Set thinking level | `/reasoning medium` |
+| `/remainingusage` | Show remaining tokens graphically | `/remainingusage` |
 
-## 🧠 سطوح Thinking
+## 🧠 Thinking Levels
 
-| مقدار | نمایش | توضیح |
-|-------|-------|-------|
-| `off` | خاموش | غیرفعال کردن تفکر |
-| `minimal` | حداقل | حداقل تفکر |
-| `light` یا `low` | light | تفکر سبک |
-| `medium` یا `med` | medium | تفکر متوسط |
-| `high` | high | تفکر بالا |
-| `extra` یا `xhigh` | extra | تفکر بسیار بالا |
-| `max` | max | حداکثر تفکر |
+| Value | Display | Description |
+|-------|---------|-------------|
+| `off` | Off | Disable thinking |
+| `minimal` | Minimal | Minimum thinking |
+| `light` or `low` | light | Light thinking |
+| `medium` or `med` | medium | Medium thinking |
+| `high` | high | High thinking |
+| `extra` or `xhigh` | extra | Extra high thinking |
+| `max` | max | Maximum thinking |
 
-### مثال تغییر سطح Thinking
+### Changing Thinking Level Examples
 
 ```
-/reasoning light    # تفکر سبک
-/reasoning medium   # تفکر متوسط
-/reasoning extra    # تفکر بسیار بالا
-/reasoning max      # حداکثر تفکر
-/reasoning off      # خاموش کردن تفکر
+/reasoning light    # Light thinking
+/reasoning medium   # Medium thinking
+/reasoning extra    # Extra high thinking
+/reasoning max      # Maximum thinking
+/reasoning off      # Disable thinking
 ```
 
-## 📁 ساختار فایل‌ها
+## 📁 File Structure
 
 ```
 .
-├── main.py              # کد اصلی ربات
-├── config.py            # فایل تنظیمات (توکن‌ها و URLها)
-├── requirements.txt     # وابستگی‌های پایتون
-├── history.json         # ذخیره پایدار وضعیت کاربران
-└── README.md            # این فایل راهنما
+├── main.py              # Main bot code
+├── config.py            # Configuration file (tokens & URLs)
+├── requirements.txt     # Python dependencies
+├── history.json         # Persistent user state storage
+└── README.md            # This readme file
 ```
 
-## 🔧 نحوه کارکرد
+## 🔧 How It Works
 
-### چرخه حیات یک گفتگو
+### Chat Lifecycle
 
-1. **شروع**: کاربر `/start` را ارسال می‌کند
-2. **انتخاب مدل**: کاربر با `/models` مدل مورد نظر را انتخاب می‌کند
-3. **تنظیم Thinking**: کاربر با `/reasoning` سطح تفکر را تنظیم می‌کند
-4. **ارسال پیام**: کاربر پیام خود را ارسال می‌کند
-5. **پردازش**: ربات پیام را به OpenClaw ارسال کرده و پاسخ دریافت می‌کند
-6. **ذخیره‌سازی**: پیام‌های کاربر و ربات در `history.json` ذخیره می‌شوند
-7. **پایان**: کاربر با `/end` یا `/newchat` گفتگو را به پایان می‌رساند
+1. **Start**: User sends `/start`
+2. **Select Model**: User chooses model via `/models`
+3. **Set Thinking**: User adjusts thinking level with `/reasoning`
+4. **Send Message**: User sends their message
+5. **Processing**: Bot sends message to OpenClaw and receives response
+6. **Storage**: User and bot messages are saved in `history.json`
+7. **End**: User ends chat with `/end` or `/newchat`
 
-### مدیریت وضعیت کاربران
+### User State Management
 
-- وضعیت هر کاربر در حافظه (`user_states`) نگهداری می‌شود
-- در فواصل منظم و هنگام تغییرات مهم، وضعیت در `history.json` ذخیره می‌شود
-- هنگام راه‌اندازی مجدد ربات، وضعیت‌ها از فایل بازیابی می‌شوند
+- User state is maintained in memory (`user_states`)
+- State is periodically saved to `history.json` and on important changes
+- On bot restart, states are restored from the file
 
-## 🗄 کش مدل‌ها
+## 🗄 Models Cache
 
-برای کاهش درخواست‌های تکراری به سرور OpenClaw، لیست مدل‌ها کش می‌شود:
+To reduce repeated requests to OpenClaw server, models are cached:
 
-- **زمان انقضا**: 120 ثانیه (قابل تنظیم با `MODELS_CACHE_TTL_SECONDS`)
-- **کلیدهای کش**: 
-  - `openai`: مدل‌های ارائه‌دهنده OpenAI
-  - `all`: تمام مدل‌های موجود
+- **TTL**: 120 seconds (configurable via `MODELS_CACHE_TTL_SECONDS`)
+- **Cache Keys**: 
+  - `openai`: OpenAI provider models
+  - `all`: All available models
 
-## ⚠️ محدودیت‌ها
+## ⚠️ Limitations
 
-- نیاز به سرور OpenClaw در حال اجرا دارد
-- حداکثر 30 گفتگوی اخیر برای هر کاربر ذخیره می‌شود
-- حداکثر 12 مدل در لیست نمایش داده می‌شود
-- حذف پیام‌ها در بله ممکن است همیشه موفقیت‌آمیز نباشد (بسته به API)
+- Requires running OpenClaw server
+- Maximum 30 recent chats stored per user
+- Maximum 12 models displayed in list
+- Message deletion in Bale may not always succeed (depends on API)
 
-## 🔒 نکات امنیتی
+## 🔒 Security Notes
 
-1. **محافظت از توکن**: فایل `config.py` را به `.gitignore` اضافه کنید
-2. **عدم آپلود در گیت**: هرگز توکن‌ها را در مخازن عمومی آپلود نکنید
-3. **استفاده از متغیرهای محیطی**: در محیط تولید، از متغیرهای محیطی استفاده کنید
-4. **محدود کردن دسترسی**: دسترسی به سرور OpenClaw را محدود کنید
+1. **Protect Token**: Add `config.py` to `.gitignore`
+2. **No Git Upload**: Never upload tokens to public repositories
+3. **Use Environment Variables**: In production, use environment variables
+4. **Restrict Access**: Limit access to OpenClaw server
 
-### نمونه `.gitignore`
+### Sample `.gitignore`
 
 ```gitignore
 config.py
@@ -183,39 +183,39 @@ __pycache__/
 .env
 ```
 
-## 💬 نمونه مکالمه
+## 💬 Sample Conversation
 
 ```
 User: /start
-Bot: 👋 سلام! ربات هوش مصنوعی آماده است.
+Bot: 👋 Hello! AI Bot is ready.
 
 User: /models
-Bot: 📡 مدل‌های OpenAI:
+Bot: 📡 OpenAI Models:
      1. ● openai/gpt-4
      2. ● openai/gpt-3.5-turbo ✅
      3. ○ openai/gpt-3.5
 
 User: /models 1
-Bot: ✅ مدل فعلی تنظیم شد: openai/gpt-4
+Bot: ✅ Current model set to: openai/gpt-4
 
 User: /reasoning medium
-Bot: ✅ thinking روی medium تنظیم شد.
+Bot: ✅ thinking set to medium.
 
-User: پایتخت ایران چیست؟
-Bot: پایتخت ایران تهران است.
+User: What is the capital of Iran?
+Bot: The capital of Iran is Tehran.
 
 User: /end
-Bot: گفتگو ذخیره شد.
+Bot: Conversation saved.
 ```
 
-## 📄 مجوز
+## 📄 License
 
-این پروژه بدون مجوز خاصی منتشر شده است. برای استفاده تجاری یا توزیع، لطفاً با توسعه‌دهنده تماس بگیرید.
+This project is published without a specific license. For commercial use or distribution, please contact the developer.
 
-## 🆘 پشتیبانی
+## 🆘 Support
 
-برای گزارش مشکلات یا درخواست ویژگی‌های جدید، لطفاً issue ایجاد کنید یا با توسعه‌دهنده تماس بگیرید.
+For bug reports or feature requests, please create an issue or contact the developer.
 
 ---
 
-**توسعه یافته با ❤️ برای پلتفرم بله**
+**Developed with ❤️ for the Bale platform**
